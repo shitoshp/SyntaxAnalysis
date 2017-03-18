@@ -11,15 +11,18 @@ int lexLen;
 int token;
 int nextToken;
 FILE *in_fp, *fopen();
+
 /* Function declarations */
 void addChar();
 void getChar();
 void getNonBlank();
 int lex();
+
 /* Character classes */
 #define LETTER 0
 #define DIGIT 1
 #define UNKNOWN 99
+
 /* Token codes */
 #define INT_LIT 10
 #define IDENT 11
@@ -33,9 +36,9 @@ int lex();
 
 /******************************************************/
 /* main driver */
-main() {
+int main() {
 /* Open the input data file and process its contents */
-	if ((in_fp = fopen("front.in", "r")) == NULL)
+	if ((in_fp = fopen("front.txt", "r")) == NULL)
 	printf("ERROR - cannot open front.in \n");
 	else {
 	getChar();
@@ -43,7 +46,10 @@ main() {
 		lex();
 		} while (nextToken != EOF);
 	}
+
+	return 0;
 }
+
 /*****************************************************/
 /* lookup - a function to lookup operators and parentheses
 and return the token */
@@ -92,6 +98,7 @@ void addChar() {
 	else
 	printf("Error - lexeme is too long \n");
 }
+
 /*****************************************************/
 /* getChar - a function to get the next character of
 input and determine its character class */
@@ -106,6 +113,7 @@ void getChar() {
 	else
 	charClass = EOF;
 }
+
 /*****************************************************/
 /* getNonBlank - a function to call getChar until it
 returns a non-whitespace character */
@@ -114,8 +122,7 @@ void getNonBlank() {
 	getChar();
 }
 
-/
-*****************************************************/
+/*****************************************************/
 /* lex - a simple lexical analyzer for arithmetic
 expressions */
 int lex() {
