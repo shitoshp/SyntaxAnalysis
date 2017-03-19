@@ -245,5 +245,5 @@ printf("Exit <factor>\n");;
 }/* End of function factor */
 
 void error(){
-	printf("Error");
+	printf("Error in %s\n", lexeme);
 }

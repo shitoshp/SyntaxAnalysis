@@ -1,1 +1,1 @@
-sum = (a + b) / total
+sum == (a + b) / total
