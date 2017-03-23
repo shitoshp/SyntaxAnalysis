@@ -42,15 +42,19 @@ void error();
 /* main driver */
 int main() {
 /* Open the input data file and process its contents */
+	char *line = NULL;
+	int len = 0;
+	int read;
 	if ((in_fp = fopen("front.txt", "r")) == NULL)
 		printf("ERROR - cannot open front.in \n");
 	else {
-		getChar();
-		do {
-			lex();
-			expr();
-		} while (nextToken != EOF);
-		
+		while ((read = getline(&line, &len, in_fp)) != -1){
+			getChar();
+			do {
+				lex();
+				expr();
+			} while (nextToken != '\n');
+		}
 	}
 
 	return 0;
@@ -89,6 +93,8 @@ int lookup(char ch) {
 			addChar();
 			nextToken = ASSIGN_OP;
 			break;
+		case '\n':
+			
 		default:
 			addChar();
 			nextToken = EOF;
