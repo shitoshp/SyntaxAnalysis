@@ -11,6 +11,10 @@ int lexLen;
 int token;
 int nextToken;
 FILE *in_fp, *fopen();
+char *line = NULL;
+size_t len = 0;
+ssize_t read;
+int char_index;
 
 /* Function declarations */
 void addChar();
@@ -37,25 +41,32 @@ void error();
 #define DIV_OP 24
 #define LEFT_PAREN 25
 #define RIGHT_PAREN 26
+#define NEW_LINE 30
 
 /******************************************************/
 /* main driver */
 int main() {
 /* Open the input data file and process its contents */
-	char *line = NULL;
-	int len = 0;
-	int read;
+	
 	if ((in_fp = fopen("front.txt", "r")) == NULL)
 		printf("ERROR - cannot open front.in \n");
 	else {
+		printf("xD");
 		while ((read = getline(&line, &len, in_fp)) != -1){
+			char_index = 0;
+			printf("\n%s", line);
 			getChar();
-			do {
-				lex();
-				expr();
-			} while (nextToken != '\n');
+			if (line != NULL){
+				do {
+					lex();
+					expr();					
+				} while (nextToken != EOF);
+			}
 		}
+
 	}
+
+	fclose(in_fp);
 
 	return 0;
 }
@@ -93,8 +104,6 @@ int lookup(char ch) {
 			addChar();
 			nextToken = ASSIGN_OP;
 			break;
-		case '\n':
-			
 		default:
 			addChar();
 			nextToken = EOF;
@@ -120,7 +129,9 @@ void addChar() {
 /* getChar - a function to get the next character of
 input and determine its character class */
 void getChar() {
-	if ((nextChar = getc(in_fp)) != EOF) {
+	if (line[char_index] != '\n' && line[char_index] != EOF) {
+		nextChar = line[char_index];
+		char_index++;
 		if (isalpha(nextChar))
 			charClass = LETTER;
 		else if (isdigit(nextChar))
@@ -168,10 +179,17 @@ int lex() {
 			break;
 	/* Parentheses and operators */
 		case UNKNOWN:
+			//printf("WE HERE MATE");
 			lookup(nextChar);
 			getChar();
 			break;
 			/* EOF */
+		case NEW_LINE:
+			nextToken = NEW_LINE;
+			printf("WE HERE MATE");
+			lexeme[0] = 0;
+			break;
+			//lexeme[0] = 0;
 		case EOF:
 			nextToken = EOF;
 			lexeme[0] = 'E';
