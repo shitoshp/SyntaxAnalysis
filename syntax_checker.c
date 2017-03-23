@@ -17,6 +17,8 @@ size_t len = 0;
 ssize_t read;
 int char_index;
 int line_number = 1;
+char errorString [256];
+int errorLen;
 
 /* Function declarations */
 void addChar();
@@ -27,6 +29,7 @@ void expr();
 void term();
 void factor();
 void error();
+void addCharError();
 
 /* Character classes */
 #define LETTER 0
@@ -49,6 +52,7 @@ void error();
 /* main driver */
 int main(int argc, char *argv[]) {
 /* Open the input data file and process its contents */
+	errorLen = 0;
 	if ((in_fp = fopen(argv[1], "r")) == NULL)
 		printf("ERROR - cannot open front.in \n");
 	else {
@@ -56,13 +60,15 @@ int main(int argc, char *argv[]) {
 			char_index = 0;
 			printf("Parsing line %d: %s", line_number, line);
 			getChar();
+			
 			if (line != NULL){
 				do {
 					lex();
 					expr();					
 				} while (nextToken != EOF);
 			}
-		printf("\n");
+		errorLen = 0;
+		printf("\n\n\n");
 		line_number++;		
 		}
 
@@ -114,6 +120,11 @@ int lookup(char ch) {
 	return nextToken;
 }
 
+void addCharError() {
+	errorString[errorLen] = nextChar;
+	errorLen++;
+	errorString[errorLen] = 0;
+}
 
 /*****************************************************/
 /* addChar - a function to add nextChar to lexeme */
@@ -162,18 +173,24 @@ int lex() {
 		/* Parse identifiers */
 		case LETTER:
 			addChar();
+			addCharError();
 			getChar();
+			
 			while (charClass == LETTER || charClass == DIGIT) {
 				addChar();
+				addCharError();
 				getChar();
+				
 			}
 			nextToken = IDENT;
 			break;
 		/* Parse integer literals */
 		case DIGIT:
 			addChar();
+			addCharError();
 			getChar();
 			while (charClass == DIGIT) {
+				addCharError();
 				addChar();
 				getChar();
 			}
@@ -182,6 +199,7 @@ int lex() {
 	/* Parentheses and operators */
 		case UNKNOWN:
 			//printf("WE HERE MATE");
+			addCharError();
 			lookup(nextChar);
 			getChar();
 			break;
@@ -271,9 +289,9 @@ printf("Exit <factor>\n");;
 }/* End of function factor */
 
 void error(){
-	//printf("%s", lexeme);
+	printf("\n %s \n", errorString);
 	if (strcmp(lexeme, "EOF") == 0)
-		printf("Error in line number %d, Unexpected line ending\n", line_number);
+		printf("****Error in line number %d, Unexpected line ending****\n", line_number);
 	else
-		printf("Error in line number %d, %s\n", line_number, lexeme);
+		printf("****Error in line number %d, Unexpected symbol: %s ****\n\n", line_number, lexeme);
 }
