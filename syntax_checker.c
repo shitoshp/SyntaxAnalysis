@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <ctype.h>
+#include <string.h>
 
 /* Global declarations */
 /* Variables */
@@ -15,6 +16,7 @@ char *line = NULL;
 size_t len = 0;
 ssize_t read;
 int char_index;
+int line_number = 1;
 
 /* Function declarations */
 void addChar();
@@ -47,14 +49,12 @@ void error();
 /* main driver */
 int main() {
 /* Open the input data file and process its contents */
-	
 	if ((in_fp = fopen("front.txt", "r")) == NULL)
 		printf("ERROR - cannot open front.in \n");
 	else {
-		printf("xD");
 		while ((read = getline(&line, &len, in_fp)) != -1){
 			char_index = 0;
-			printf("\n%s", line);
+			printf("Parsing line %d: %s", line_number, line);
 			getChar();
 			if (line != NULL){
 				do {
@@ -62,6 +62,8 @@ int main() {
 					expr();					
 				} while (nextToken != EOF);
 			}
+		printf("\n");
+		line_number++;		
 		}
 
 	}
@@ -269,5 +271,9 @@ printf("Exit <factor>\n");;
 }/* End of function factor */
 
 void error(){
-	printf("Error in %s\n", lexeme);
+	//printf("%s", lexeme);
+	if (strcmp(lexeme, "EOF") == 0)
+		printf("Error in line number %d, Unexpected line ending\n", line_number);
+	else
+		printf("Error in line number %d, %s\n", line_number, lexeme);
 }
