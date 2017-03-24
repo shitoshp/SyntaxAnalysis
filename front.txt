@@ -1,4 +1,1 @@
-sum =
-(x + y) +/ z
-a + b
-sum + total) / 5
+sum = (a + b) /+ 5 +
